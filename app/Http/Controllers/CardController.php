@@ -18,24 +18,25 @@ class CardController extends Controller
             $id = $request->input('id');
             $document = $request->input('document');
 
-            $hash = Crypt::encryptString(json_encode([
+            $hash = $this->encryptHash([
                 'id' => $id,
                 'document' => $document
-            ]));
+            ]);
 
-            return redirect()->route('card.show', ['hash' => base64_encode('NICETRYBRO'.$hash)]);
+            return redirect()->route('card.show', ['hash' => $hash]);
         } 
 
         if ($hash) {
 
             try {
-                $decrypted = json_decode(Crypt::decryptString(str_replace('NICETRYBRO', '', base64_decode($hash))), true);
+                $decrypted = $this->decryptHash($hash);
 
                 $id = $decrypted['id'];
                 $document = $decrypted['document'];
 
                 $student = $api->get("/students/{$id}");
 
+                dd($student);
 
                 if (!isset($student['data'])) return redirect()->route('form')->with('error', 'Estudante não encontrado (RA ou CPF inválidos).');
 
@@ -64,7 +65,7 @@ class CardController extends Controller
 
 
         try {
-            $decrypted = json_decode(Crypt::decryptString(str_replace('NICETRYBRO', '', base64_decode($hash))), true);
+            $decrypted = $this->decryptHash($hash);
 
             $id = $decrypted['id'];
             $document = $decrypted['document'];
@@ -232,7 +233,7 @@ class CardController extends Controller
     public function uploadPhoto(Request $request, $hash)
     {
         try {
-            $decrypted = json_decode(Crypt::decryptString(str_replace('NICETRYBRO', '', base64_decode($hash))), true);
+            $decrypted = $this->decryptHash($hash);
             $id = $decrypted['id'];
 
             $request->validate([
@@ -282,7 +283,7 @@ class CardController extends Controller
     public function validateCard(Request $request, ApiService $api, $hash)
     {
         try {
-            $decrypted = json_decode(Crypt::decryptString(str_replace('NICETRYBRO', '', base64_decode($hash))), true);
+            $decrypted = $this->decryptHash($hash);
             $id = $decrypted['id'];
             $document = $decrypted['document'];
             $isOldHash = true;
@@ -328,5 +329,72 @@ class CardController extends Controller
         } catch (\Exception $e) {
             return view('validate', ['valid' => false]);
         }
+    }
+    private function encryptHash($data)
+    {
+        // Compact Payload: ID|CPF (Only numbers for CPF to save space)
+        $payload = $data['id'] . '|' . preg_replace('/\D/', '', $data['document']);
+
+        // AES-256-GCM (Authenticated Encryption) for minimal size
+        // Requires 12 bytes IV, 16 bytes Tag
+        $iv = openssl_random_pseudo_bytes(12);
+        $key = app('encrypter')->getKey(); // Uses Laravel's APP_KEY
+        
+        $tag = '';
+        $ciphertext = openssl_encrypt($payload, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag);
+        
+        // Structure: IV (12) . Tag (16) . Ciphertext (Variable)
+        $blob = $iv . $tag . $ciphertext;
+        
+        return str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($blob));
+    }
+
+    private function decryptHash($hash)
+    {
+        // 1. Decodifica Base64 URL Safe
+        $decoded = base64_decode(str_replace(['-', '_'], ['+', '/'], $hash));
+
+        // 2. Tenta decodificar formato compact (AES-256-GCM)
+        // Min size: 12 (IV) + 16 (Tag) + 1 (Payload) = 29 bytes
+        if (strlen($decoded) >= 29) {
+            $iv = substr($decoded, 0, 12);
+            $tag = substr($decoded, 12, 16);
+            $ciphertext = substr($decoded, 28);
+            
+            try {
+                $key = app('encrypter')->getKey();
+                $plaintext = openssl_decrypt($ciphertext, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag);
+                
+                if ($plaintext !== false && strpos($plaintext, '|') !== false) {
+                    list($id, $document) = explode('|', $plaintext, 2);
+                    return ['id' => $id, 'document' => $document];
+                }
+            } catch (\Exception $e) {
+                // Falha silenciosa para tentar outros métodos
+            }
+        }
+
+        // 3. Fallback: Formato Laravel Padrão (URL Safe ou Base64 normal)
+        // Tenta adicionar padding se necessário para o formato base64 original
+        try {
+             // Re-pad para Crypt::decryptString que exige base64 válido
+             $b64 = str_replace(['-', '_'], ['+', '/'], $hash);
+             $len = strlen($b64);
+             if ($len % 4) {
+                  $b64 .= str_repeat('=', 4 - ($len % 4));
+             }
+             return json_decode(Crypt::decryptString($b64), true);
+        } catch (\Exception $e) {}
+
+        // 4. Fallback: Legado "NICETRYBRO"
+        try {
+            $decodedLegacy = base64_decode($hash);
+            if ($decodedLegacy && strpos($decodedLegacy, 'NICETRYBRO') === 0) {
+                $encrypted = str_replace('NICETRYBRO', '', $decodedLegacy);
+                return json_decode(Crypt::decryptString($encrypted), true);
+            }
+        } catch (\Exception $e) {}
+
+        throw new \Exception('Invalid Hash');
     }
 }

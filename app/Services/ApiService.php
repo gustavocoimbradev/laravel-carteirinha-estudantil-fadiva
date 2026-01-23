@@ -13,7 +13,7 @@ class ApiService {
                 ->withToken(env('API_TOKEN'))
                 ->get(env('API_URL') . $endpoint);
             if ($response->successful()) return $response->json();
-            return $response->status();
+            return $response;
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return [];
