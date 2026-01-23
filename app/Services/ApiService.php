@@ -10,8 +10,8 @@ class ApiService {
     public function get(string $endpoint): mixed {
         try {
             $response = Http::timeout(5)
-                ->withToken(env('API_TOKEN'))
-                ->get(env('API_URL') . $endpoint);
+                ->withToken(config('app.api_token'))
+                ->get(config('app.api_token') . $endpoint);
             if ($response->successful()) return $response->json();
             return $response;
         } catch (\Exception $e) {
