@@ -1,4 +1,4 @@
-name: Deploy Fadiva API
+name: Deploy 
 
 on:
   push: 
@@ -57,3 +57,11 @@ jobs:
         run: |
           icacls "storage" /grant "IIS_IUSRS:(OI)(CI)M" /T
           icacls "bootstrap/cache" /grant "IIS_IUSRS:(OI)(CI)M" /T
+
+      - name: Instalar Dependências (NPM)
+        shell: powershell
+        run: npm install
+
+      - name: Build Assets (Vite)
+        shell: powershell
+        run: npm run build
