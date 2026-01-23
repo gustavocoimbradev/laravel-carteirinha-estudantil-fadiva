@@ -32,7 +32,10 @@ jobs:
           }
 
       - name: Instalar Dependências (Composer)
-        run: php "${{ env.PHP_PATH }}" C:\ProgramData\ComposerSetup\bin\composer.phar install --no-dev --optimize-autoloader
+        shell: powershell
+        run: |
+          # Use o PHP para rodar o composer.phar corretamente
+          & "${{ env.PHP_PATH }}" C:\ProgramData\ComposerSetup\bin\composer.phar install --no-dev --optimize-autoloader
 
       - name: Rodar Migrations
         run: '& "${{ env.PHP_PATH }}" artisan migrate --force'
