@@ -81,7 +81,7 @@ class CardController extends Controller
 
             $image = imagecreatetruecolor($width, $height);
 
-            $backgroundBase64 = env('CARD_MODEL');
+            $backgroundBase64 = config('app.card_model');
             $backgroundData = base64_decode($backgroundBase64);
             $background = imagecreatefromstring($backgroundData);
             

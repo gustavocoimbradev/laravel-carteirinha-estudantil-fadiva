@@ -125,5 +125,6 @@ return [
 
     'api_token' => env('API_TOKEN'),
     'api_url' => env('API_URL'),
+    'card_model' => env('CARD_MODEL'),
 
 ];
