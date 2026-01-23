@@ -4,7 +4,8 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "deploy": "git pull && git add . && git commit -m 'update' && git push"
     },
     "dependencies": {
         "@tailwindcss/vite": "^4.1.11",

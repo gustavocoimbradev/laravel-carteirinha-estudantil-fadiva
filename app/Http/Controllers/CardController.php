@@ -182,7 +182,7 @@ class CardController extends Controller
                 imagedestroy($finalPhoto);
                 
                 imagedestroy($photo);
-            }
+            } 
 
             $validateUrl = route('card.validate', ['hash' => base64_encode($id)]);
             $qrCodeUrl = "https://quickchart.io/qr?text=" . urlencode($validateUrl) . "&size=300&margin=0&ecLevel=L";

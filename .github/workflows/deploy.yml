@@ -1,0 +1,56 @@
+name: Deploy Fadiva API
+
+on:
+  push: 
+    branches: [ "main" ] 
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    env:
+      PHP_PATH: 'C:\Program Files\PHP\v8.2\php.exe' 
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+        with:
+          clean: false 
+
+      - name: Preservar web.config (PHP 8.2 Mapping)
+        shell: powershell
+        run: |
+          if (Test-Path "public\web.config") {
+            Copy-Item "public\web.config" "web.config.bak" -Force
+          }
+
+      - name: Garantir arquivo .env
+        shell: powershell
+        run: |
+          if (!(Test-Path .env)) {
+            Copy-Item .env.example .env
+            & "${{ env.PHP_PATH }}" artisan key:generate
+          }
+
+      - name: Instalar Dependências (Composer)
+        run: php "${{ env.PHP_PATH }}" C:\ProgramData\ComposerSetup\bin\composer.phar install --no-dev --optimize-autoloader
+
+      - name: Rodar Migrations
+        run: '& "${{ env.PHP_PATH }}" artisan migrate --force'
+
+      - name: Restaurar web.config do IIS
+        shell: powershell
+        run: |
+          if (Test-Path "web.config.bak") {
+            Move-Item "web.config.bak" "public\web.config" -Force
+          }
+
+      - name: Otimizar Cache do Laravel
+        run: |
+          & "${{ env.PHP_PATH }}" artisan config:cache 
+          & "${{ env.PHP_PATH }}" artisan route:cache 
+          & "${{ env.PHP_PATH }}" artisan view:cache
+          
+      - name: Ajustar Permissões (Storage)
+        run: |
+          icacls "storage" /grant "IIS_IUSRS:(OI)(CI)M" /T
+          icacls "bootstrap/cache" /grant "IIS_IUSRS:(OI)(CI)M" /T
