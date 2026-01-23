@@ -36,8 +36,6 @@ class CardController extends Controller
 
                 $student = $api->get("/students/{$id}");
 
-                dd($student);
-
                 if (!isset($student['data'])) return redirect()->route('form')->with('error', 'Estudante não encontrado (RA ou CPF inválidos).');
 
                 $data = $student['data'];
