@@ -11,7 +11,7 @@ class ApiService {
         try {
             $response = Http::timeout(5)
                 ->withToken(config('app.api_token'))
-                ->get(config('app.api_token') . $endpoint);
+                ->get(config('app.api_url') . $endpoint);
             if ($response->successful()) return $response->json();
             return $response;
         } catch (\Exception $e) {
