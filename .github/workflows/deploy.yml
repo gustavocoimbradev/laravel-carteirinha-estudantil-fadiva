@@ -47,6 +47,17 @@ jobs:
             Move-Item "web.config.bak" "public\web.config" -Force
           }
 
+      - name: Instalar Dependências (NPM)
+        run: npm install
+
+      - name: Build Assets (Vite)
+        run: npm run build
+
+      - name: Limpar caches antigos
+        run: |
+          & "${{ env.PHP_PATH }}" artisan config:clear
+          & "${{ env.PHP_PATH }}" artisan route:clear
+
       - name: Otimizar Cache do Laravel
         run: |
           & "${{ env.PHP_PATH }}" artisan config:cache 
