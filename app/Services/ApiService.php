@@ -10,6 +10,7 @@ class ApiService {
     public function get(string $endpoint): mixed {
         try {
             $response = Http::timeout(5)
+                ->withoutVerifying()
                 ->withToken(config('app.api_token'))
                 ->get(config('app.api_url') . $endpoint);
             if ($response->successful()) return $response->json();
