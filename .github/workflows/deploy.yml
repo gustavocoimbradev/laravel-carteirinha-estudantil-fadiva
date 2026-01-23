@@ -34,8 +34,15 @@ jobs:
       - name: Instalar Dependências (Composer)
         shell: powershell
         run: |
-          # Use o PHP para rodar o composer.phar corretamente
           & "${{ env.PHP_PATH }}" C:\ProgramData\ComposerSetup\bin\composer.phar install --no-dev --optimize-autoloader
+
+      - name: Instalar Dependências (NPM)
+        shell: powershell
+        run: npm install
+
+      - name: Build Assets (Vite)
+        shell: powershell
+        run: npm run build
 
       - name: Rodar Migrations
         run: '& "${{ env.PHP_PATH }}" artisan migrate --force'
@@ -47,19 +54,11 @@ jobs:
             Move-Item "web.config.bak" "public\web.config" -Force
           }
 
-      - name: Instalar Dependências (NPM)
-        run: npm install
-
-      - name: Build Assets (Vite)
-        run: npm run build
-
-      - name: Limpar caches antigos
+      - name: Limpar caches e Otimizar
         run: |
           & "${{ env.PHP_PATH }}" artisan config:clear
           & "${{ env.PHP_PATH }}" artisan route:clear
-
-      - name: Otimizar Cache do Laravel
-        run: |
+          & "${{ env.PHP_PATH }}" artisan view:clear
           & "${{ env.PHP_PATH }}" artisan config:cache 
           & "${{ env.PHP_PATH }}" artisan route:cache 
           & "${{ env.PHP_PATH }}" artisan view:cache
@@ -68,11 +67,3 @@ jobs:
         run: |
           icacls "storage" /grant "IIS_IUSRS:(OI)(CI)M" /T
           icacls "bootstrap/cache" /grant "IIS_IUSRS:(OI)(CI)M" /T
-
-      - name: Instalar Dependências (NPM)
-        shell: powershell
-        run: npm install
-
-      - name: Build Assets (Vite)
-        shell: powershell
-        run: npm run build
