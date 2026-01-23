@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+@theme {
+    --color-fadiva-dark: #3d0813;
+    --color-fadiva-wine: #660819;
+    --color-fadiva-burgundy: #9e1821;
+    --color-fadiva-rose: #de4951;
+}
+
+@keyframes gradient-shift {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.animate-gradient-shift {
+    background-size: 200% 200%;
+    animation: gradient-shift 8s ease infinite;
+}
+
+.bg-gradient-fadiva {
+    background: linear-gradient(135deg, var(--color-fadiva-dark) 0%, var(--color-fadiva-wine) 40%, var(--color-fadiva-burgundy) 100%);
+}
+
+.bg-gradient-fadiva-animated {
+    background: linear-gradient(135deg, var(--color-fadiva-wine) 0%, var(--color-fadiva-burgundy) 50%, var(--color-fadiva-rose) 100%);
+}
