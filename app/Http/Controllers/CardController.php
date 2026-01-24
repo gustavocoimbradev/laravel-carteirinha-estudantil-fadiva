@@ -76,8 +76,9 @@ class CardController extends Controller
             
             if ($data['ra'] != $id || $data['cpf'] != preg_replace('/\D/', '', $document)) abort(404);
 
-            $width = 500;
-            $height = 315;
+            $scale = 3; 
+            $width = 500 * $scale;
+            $height = 315 * $scale;
 
             $image = imagecreatetruecolor($width, $height);
 
@@ -101,28 +102,28 @@ class CardController extends Controller
             $fontBold = public_path('fonts/arial-bold.ttf');
   
             // Nome do estudante (maior e em destaque)
-            imagettftext($image, 11, 0, 20, 150, $black, $fontBold, strtoupper($data['name']));
+            imagettftext($image, 11 * $scale, 0, 20 * $scale, 150 * $scale, $black, $fontBold, strtoupper($data['name']));
 
             // Data de Nascimento
-            imagettftext($image, 8, 0, 20, 180, $black, $fontBold, 'DATA DE NASCIMENTO');
-            imagettftext($image, 10, 0, 20, 200, $black, $fontRegular, (new DateTime((string) ($data['birth'])))->format('d/m/Y'));
+            imagettftext($image, 8 * $scale, 0, 20 * $scale, 180 * $scale, $black, $fontBold, 'DATA DE NASCIMENTO');
+            imagettftext($image, 10 * $scale, 0, 20 * $scale, 200 * $scale, $black, $fontRegular, (new DateTime((string) ($data['birth'])))->format('d/m/Y'));
 
             // Matrícula
-            imagettftext($image, 8, 0, 170, 180, $black, $fontBold, 'MATRÍCULA');
-            imagettftext($image, 8, 0, 170, 200, $black, $fontRegular, $data['ra']);
+            imagettftext($image, 8 * $scale, 0, 170 * $scale, 180 * $scale, $black, $fontBold, 'MATRÍCULA');
+            imagettftext($image, 8 * $scale, 0, 170 * $scale, 200 * $scale, $black, $fontRegular, $data['ra']);
 
             // Curso
-            imagettftext($image, 8, 0, 20, 230, $black, $fontBold, 'CURSO');
-            imagettftext($image, 8, 0, 20, 250, $black, $fontRegular, strtoupper($data['enroll']['course']['description']));
+            imagettftext($image, 8 * $scale, 0, 20 * $scale, 230 * $scale, $black, $fontBold, 'CURSO');
+            imagettftext($image, 8 * $scale, 0, 20 * $scale, 250 * $scale, $black, $fontRegular, strtoupper($data['enroll']['course']['description']));
 
 
             // Turma
-            imagettftext($image, 8, 0, 170, 230, $black, $fontBold, 'TURMA');
-            imagettftext($image, 8, 0, 170, 250, $black, $fontRegular, $data['enroll']['class']['description']);
+            imagettftext($image, 8 * $scale, 0, 170 * $scale, 230 * $scale, $black, $fontBold, 'TURMA');
+            imagettftext($image, 8 * $scale, 0, 170 * $scale, 250 * $scale, $black, $fontRegular, $data['enroll']['class']['description']);
          
             // Validade
             $validityText = 'Válido até ' . (new DateTime((string) ($data['card']['expiration'])))->format('d/m/Y');
-            imagettftext($image, 8, 0, 320, 295, $white, $fontRegular, $validityText);
+            imagettftext($image, 8 * $scale, 0, 320 * $scale, 295 * $scale, $white, $fontRegular, $validityText);
 
             $photoPath = storage_path('app/public/photos/' . $id . '.jpg');
             
@@ -133,10 +134,10 @@ class CardController extends Controller
             if (file_exists($photoPath)) {
                 $photo = imagecreatefromjpeg($photoPath);
                 
-                $photoDestX = 320;
-                $photoDestY = 170; 
-                $photoDestW = 100;
-                $photoDestH = 100;
+                $photoDestX = 320 * $scale;
+                $photoDestY = 170 * $scale; 
+                $photoDestW = 100 * $scale;
+                $photoDestH = 100 * $scale;
 
                 $origW = imagesx($photo);
                 $origH = imagesy($photo);
@@ -193,14 +194,14 @@ class CardController extends Controller
             // Texto validação QR Code
             $qrText = "Valide a carteirinha\natravés do QR Code";
             $parts = explode("\n", $qrText);
-            $textY = 35;
+            $textY = 35 * $scale;
             
             foreach ($parts as $line) {
-                $bbox = imagettfbbox(7, 0, $fontRegular, $line);
+                $bbox = imagettfbbox(7 * $scale, 0, $fontRegular, $line);
                 $textWidth = $bbox[2] - $bbox[0];
-                $textX = 370 - ($textWidth / 2); 
-                imagettftext($image, 7, 0, $textX, $textY, $black, $fontRegular, $line);
-                $textY += 12;
+                $textX = (370 * $scale) - ($textWidth / 2); 
+                imagettftext($image, 7 * $scale, 0, $textX, $textY, $black, $fontRegular, $line);
+                $textY += 12 * $scale;
             }
 
             try {
@@ -208,7 +209,7 @@ class CardController extends Controller
                 if ($qrCodeData) {
                     $qrCode = imagecreatefromstring($qrCodeData);
                     if ($qrCode) {
-                        imagecopyresampled($image, $qrCode, 330, 60, 0, 0, 80, 80, imagesx($qrCode), imagesy($qrCode));
+                        imagecopyresampled($image, $qrCode, 330 * $scale, 60 * $scale, 0, 0, 80 * $scale, 80 * $scale, imagesx($qrCode), imagesy($qrCode));
                         imagedestroy($qrCode);
                     }
                 }
