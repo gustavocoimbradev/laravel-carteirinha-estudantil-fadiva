@@ -343,7 +343,7 @@ class CardController extends Controller
 
         try {
 
-            if (isset($id) && $id == '00000' && isset($document) && $document == '00000000000') {
+            if (isset($id) && $id == '00000') {
                     $data = [
                         'ra' => '00000',
                         'cpf' => '00000000000',
