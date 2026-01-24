@@ -4,7 +4,7 @@
     <div class="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 flex flex-col lg:flex-row overflow-x-hidden">
         <!-- Left Column - Form -->
         <div
-            class="w-full lg:w-1/2 lg:h-screen bg-gradient-fadiva flex items-center justify-center p-4 lg:p-6 relative overflow-hidden">
+            class="w-full lg:w-1/2 min-h-screen lg:h-screen bg-gradient-fadiva flex items-center justify-center p-4 lg:p-6 relative overflow-hidden">
             <!-- Animated Background Gradient -->
             <div class="absolute inset-0 opacity-30">
                 <div class="absolute inset-0 bg-gradient-fadiva-animated animate-gradient-shift"></div>
