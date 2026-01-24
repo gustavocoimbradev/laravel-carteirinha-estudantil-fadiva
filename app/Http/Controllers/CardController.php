@@ -143,7 +143,7 @@ class CardController extends Controller
 
             // Data de Nascimento
             imagettftext($image, 8 * $scale, 0, 20 * $scale, 180 * $scale, $black, $fontBold, 'DATA DE NASCIMENTO');
-            imagettftext($image, 10 * $scale, 0, 20 * $scale, 200 * $scale, $black, $fontRegular, (new DateTime((string) ($data['birth'])))->format('d/m/Y'));
+            imagettftext($image, 8 * $scale, 0, 20 * $scale, 200 * $scale, $black, $fontRegular, (new DateTime((string) ($data['birth'])))->format('d/m/Y'));
 
             // Matrícula
             imagettftext($image, 8 * $scale, 0, 170 * $scale, 180 * $scale, $black, $fontBold, 'MATRÍCULA');
