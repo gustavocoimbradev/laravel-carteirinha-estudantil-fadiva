@@ -226,7 +226,7 @@
                 </p>
 
                 <button onclick="document.getElementById('saulModal').classList.add('hidden')"
-                    class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-lg transform transition active:scale-95 uppercase tracking-wider mt-4">
+                    class="cursor-pointer w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-lg transform transition active:scale-95 uppercase tracking-wider mt-4">
                     Entendi, Sr. McGill
                 </button>
             </div>
