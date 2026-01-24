@@ -4,7 +4,7 @@
     <div class="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 flex flex-col lg:flex-row overflow-x-hidden">
 
         <!-- Left Column - Card Display -->
-        <div class="w-full lg:w-1/2 lg:h-screen relative overflow-hidden">
+        <div class="w-full lg:w-1/2 min-h-screen lg:h-screen relative overflow-hidden">
             <!-- Base Background -->
             <div class="absolute inset-0 bg-gradient-fadiva z-0"></div>
 

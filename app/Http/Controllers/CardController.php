@@ -126,6 +126,10 @@ class CardController extends Controller
 
             $photoPath = storage_path('app/public/photos/' . $id . '.jpg');
             
+            if (!file_exists($photoPath)) {
+                $photoPath = public_path('img/no-pic.jpg');
+            }
+
             if (file_exists($photoPath)) {
                 $photo = imagecreatefromjpeg($photoPath);
                 
