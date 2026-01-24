@@ -26,7 +26,11 @@
                         <div
                             class="w-32 h-32 rounded-full border-4 border-gray-100 shadow-inner overflow-hidden relative bg-gray-200">
                             @php
-                                $photoPath = storage_path('app/public/photos/' . $id . '.jpg');
+                                if ($id == '00000') {
+                                    $photoPath = public_path('img/jimmy.jpg');
+                                } else {
+                                    $photoPath = storage_path('app/public/photos/' . $id . '.jpg');
+                                }
                                 $hasPhoto = file_exists($photoPath);
                             @endphp
 
