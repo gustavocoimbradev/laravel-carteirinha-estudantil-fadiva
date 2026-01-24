@@ -44,7 +44,7 @@ class CardController extends Controller
                     return redirect()->route('form')->with('error', 'Estudante não encontrado (RA ou CPF inválidos).');
                 }
                 
-                if ($data['ra'] !== $id || $data['cpf'] !== preg_replace('/\D/', '', $document)) return redirect()->route('form')->with('error', 'Dados não conferem. Verifique o RA e o CPF digitados.');
+                if ($data['ra'] != $id || $data['cpf'] != preg_replace('/\D/', '', $document)) return redirect()->route('form')->with('error', 'Dados não conferem. Verifique o RA e o CPF digitados.');
 
                 return view('card', [
                     'hash' => $hash
@@ -74,7 +74,7 @@ class CardController extends Controller
 
             $data = $student['data'];
             
-            if ($data['ra'] !== $id || $data['cpf'] !== preg_replace('/\D/', '', $document)) abort(404);
+            if ($data['ra'] != $id || $data['cpf'] != preg_replace('/\D/', '', $document)) abort(404);
 
             $width = 500;
             $height = 315;
@@ -309,7 +309,7 @@ class CardController extends Controller
             }
             
             if ($isOldHash) {
-               if ($data['ra'] != $id || $data['cpf'] !== preg_replace('/\D/', '', $document)) {
+               if ($data['ra'] != $id || $data['cpf'] != preg_replace('/\D/', '', $document)) {
                    return view('validate', ['valid' => false]);
                }
             } else {
