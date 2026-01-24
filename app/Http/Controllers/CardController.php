@@ -34,6 +34,27 @@ class CardController extends Controller
                 $id = $decrypted['id'];
                 $document = $decrypted['document'];
 
+                if ($id == '00000' && $document == '00000000000') {
+                    $data = [
+                        'ra' => '00000',
+                        'cpf' => '00000000000',
+                        'name' => 'JIMMY MCGILL',
+                        'birth' => '1960-11-12',
+                        'enroll' => [
+                            'course' => ['description' => 'DIREITO'],
+                            'class' => ['description' => 'DIR10A']
+                        ],
+                        'card' => [
+                            'expiration' => (date('Y') + 1) . '-03-31'
+                        ]
+                    ];
+                    
+                    return view('card', [
+                        'hash' => $hash,
+                        'isEasterEgg' => true
+                    ]);
+                }
+
                 $student = $api->get("/students/{$id}");
 
                 if (!isset($student['data'])) return redirect()->route('form')->with('error', 'Estudante não encontrado (RA ou CPF inválidos).');
@@ -68,13 +89,29 @@ class CardController extends Controller
             $id = $decrypted['id'];
             $document = $decrypted['document'];
 
-            $student = $api->get("/students/{$id}");
+            if ($id == '00000' && $document == '00000000000') {
+                 $data = [
+                    'ra' => '00000',
+                    'cpf' => '00000000000',
+                    'name' => 'JIMMY MCGILL',
+                    'birth' => '1960-11-12',
+                    'enroll' => [
+                        'course' => ['description' => 'DIREITO'],
+                        'class' => ['description' => 'DIR10A']
+                    ],
+                    'card' => [
+                        'expiration' => (date('Y') + 1) . '-03-31'
+                    ]
+                ];
+            } else {
+                $student = $api->get("/students/{$id}");
 
-            if (!isset($student['data'])) abort(404);
+                if (!isset($student['data'])) abort(404);
 
-            $data = $student['data'];
-            
-            if ($data['ra'] != $id || $data['cpf'] != preg_replace('/\D/', '', $document)) abort(404);
+                $data = $student['data'];
+                
+                if ($data['ra'] != $id || $data['cpf'] != preg_replace('/\D/', '', $document)) abort(404);
+            }
 
             $scale = 3; 
             $width = 500 * $scale;
@@ -125,7 +162,11 @@ class CardController extends Controller
             $validityText = 'Válido até ' . (new DateTime((string) ($data['card']['expiration'])))->format('d/m/Y');
             imagettftext($image, 8 * $scale, 0, 320 * $scale, 295 * $scale, $white, $fontRegular, $validityText);
 
-            $photoPath = storage_path('app/public/photos/' . $id . '.jpg');
+            if ($id == '00000') {
+               $photoPath = public_path('img/jimmy.jpg');
+            } else {
+               $photoPath = storage_path('app/public/photos/' . $id . '.jpg');
+            }
             
             if (!file_exists($photoPath)) {
                 $photoPath = public_path('img/no-pic.jpg');
@@ -301,6 +342,29 @@ class CardController extends Controller
         }
 
         try {
+
+            if (isset($id) && $id == '00000' && isset($document) && $document == '00000000000') {
+                    $data = [
+                        'ra' => '00000',
+                        'cpf' => '00000000000',
+                        'name' => 'JIMMY MCGILL',
+                        'birth' => '1960-11-12',
+                        'enroll' => [
+                            'course' => ['description' => 'DIREITO'],
+                            'class' => ['description' => 'DIR10A']
+                        ],
+                        'card' => [
+                            'expiration' => (date('Y') + 1) . '-03-31'
+                        ]
+                    ];
+                    
+                    return view('validate', [
+                        'valid' => true,
+                        'data' => $data,
+                        'id' => $id
+                    ]);
+            }
+
             $student = $api->get("/students/{$id}");
 
             if (!isset($student['data'])) {

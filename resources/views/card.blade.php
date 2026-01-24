@@ -81,6 +81,7 @@
 
                         <button onclick="document.getElementById('photoModal').classList.remove('hidden')"
                             class="cursor-pointer flex-1 min-w-[140px] py-3 px-4 bg-blue-600/90 hover:bg-blue-600 backdrop-blur-md text-white rounded-xl shadow-lg hover:shadow-blue-500/30 transition-all duration-300 font-semibold text-center text-sm flex items-center justify-center gap-2">
+
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z">
@@ -136,7 +137,7 @@
             <!-- Modal Body -->
             <div class="p-6">
                 <form action="{{ route('card.upload-photo', ['hash' => $hash]) }}" method="POST"
-                    enctype="multipart/form-data" class="space-y-4">
+                    enctype="multipart/form-data" class="space-y-4" onsubmit="return handlePhotoSubmit(event)">
                     @csrf
 
                     <!-- Preview Area -->
@@ -179,6 +180,55 @@
                         <span>Salvar Foto</span>
                     </button>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Saul Modal -->
+    <div id="saulModal"
+        class="hidden fixed inset-0 bg-yellow-500/90 backdrop-blur-md flex items-center justify-center z-[60] no-print p-4">
+        <div
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-100 border-4 border-yellow-400">
+            <!-- Modal Header -->
+            <div class="bg-yellow-400 p-4 flex justify-between items-center">
+                <h2 class="text-xl font-extrabold text-red-700 flex items-center gap-2 uppercase tracking-wide"
+                    style="font-family: 'Arial Black', sans-serif;">
+                    ALERTA LEGAL!
+                </h2>
+                <button onclick="document.getElementById('saulModal').classList.add('hidden')"
+                    class="cursor-pointer text-red-700 hover:text-red-900 transition-colors">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                            d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="p-8 text-center space-y-4">
+                <div
+                    class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 border-4 border-red-500">
+                    <svg class="w-14 h-14 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
+                        </path>
+                    </svg>
+                </div>
+
+                <h3 class="text-2xl font-black text-gray-800 uppercase"
+                    style="font-family: 'Arial Black', sans-serif; letter-spacing: -1px;">
+                    É MELHOR CHAMAR O SAUL!
+                </h3>
+
+                <p class="text-gray-600 font-medium">
+                    Aconselhamos fortemente que você não tente alterar esta evidência fotográfica sem a presença do seu
+                    advogado.
+                </p>
+
+                <button onclick="document.getElementById('saulModal').classList.add('hidden')"
+                    class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-lg transform transition active:scale-95 uppercase tracking-wider mt-4">
+                    Entendi, Sr. McGill
+                </button>
             </div>
         </div>
     </div>
@@ -291,6 +341,19 @@
 
                 reader.readAsDataURL(input.files[0]);
             }
+        }
+
+        function handlePhotoSubmit(e) {
+            const isEasterEgg = @json($isEasterEgg ?? false);
+
+            if (isEasterEgg) {
+                e.preventDefault();
+                document.getElementById('photoModal').classList.add('hidden');
+                document.getElementById('saulModal').classList.remove('hidden');
+                return false;
+            }
+
+            return true;
         }
 
         // Close modal on ESC key
