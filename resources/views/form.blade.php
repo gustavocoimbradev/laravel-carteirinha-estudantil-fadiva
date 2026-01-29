@@ -31,24 +31,41 @@
 
                         <!-- RA Field -->
                         <div>
-                            <label for="id" class="block text-sm font-medium text-gray-700 mb-1.5">
-                                RA (Registro Acadêmico)
+                            <label for="user"
+                                class="block text-sm font-medium text-gray-700 mb-1.5 flex items-center gap-2">
+                                <span>Usuário</span>
+                                <div class="group relative flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="h-3 w-3 text-fadiva-burgundy hover:text-fadiva-burgundy/80 transition-colors duration-200 cursor-help"
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <div
+                                        class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-900/95 text-white text-xs rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 text-center backdrop-blur-sm pointer-events-none">
+                                        O usuário e a senha são os mesmos do <span
+                                            class="font-bold text-blue-300">Portal do Aluno</span>.
+                                        <!-- Arrow -->
+                                        <div
+                                            class="absolute top-full left-1/2 transform -translate-x-1/2 border-8 border-transparent border-t-gray-900/95">
+                                        </div>
+                                    </div>
+                                </div>
                             </label>
-                            <input type="tel" id="id" name="id" required maxlength="6"
+                            <input type="tel" id="user" name="user" required maxlength="6"
                                 inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-fadiva-burgundy focus:ring-2 focus:ring-fadiva-rose/30 transition-all duration-200 outline-none bg-white text-gray-900"
-                                placeholder="Digite seu RA">
+                                placeholder="Digite seu usuário">
                         </div>
 
                         <!-- CPF Field -->
                         <div>
-                            <label for="document" class="block text-sm font-medium text-gray-700 mb-1.5">
-                                CPF
+                            <label for="pass" class="block text-sm font-medium text-gray-700 mb-1.5">
+                                Senha
                             </label>
-                            <input type="tel" id="document" name="document" required maxlength="14"
-                                inputmode="numeric"
+                            <input type="password" id="pass" name="pass" required
                                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-fadiva-burgundy focus:ring-2 focus:ring-fadiva-rose/30 transition-all duration-200 outline-none bg-white text-gray-900"
-                                placeholder="000.000.000-00">
+                                placeholder="Digite sua senha">
                         </div>
 
                         <!-- Submit Button -->
@@ -56,7 +73,15 @@
                             class="cursor-pointer w-full bg-gradient-fadiva hover:opacity-90 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-fadiva-rose focus:ring-offset-2">
                             Acessar Carteirinha
                         </button>
+
+
+
+                        {{-- Orientacoes, informe que o usuario e a senha é o mesmo do Portal do Aluno, deixe linkado => https://portal.fadiva.edu.br/FrameHTML/web/app/edu/PortalEducacional/login/ --}}
+
                     </form>
+
+                    <!-- Guidelines -->
+
 
                     <!-- Alerts -->
                     @if (session('error'))
@@ -94,19 +119,21 @@
     <!-- CPF Mask Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const cpfInput = document.getElementById('document');
+            const cpfInput = document.getElementById('pass');
 
-            cpfInput.addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\D/g, '');
+            if (cpfInput) {
+                cpfInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
 
-                if (value.length <= 11) {
-                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
-                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
-                    value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-                }
+                    if (value.length <= 11) {
+                        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                        value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                    }
 
-                e.target.value = value;
-            });
+                    e.target.value = value;
+                });
+            }
         });
     </script>
 </x-layout>

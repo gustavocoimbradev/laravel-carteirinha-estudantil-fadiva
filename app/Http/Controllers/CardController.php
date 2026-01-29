@@ -15,15 +15,21 @@ class CardController extends Controller
 
         if ($request->isMethod('post')) {
 
-            $id = $request->input('id');
-            $document = $request->input('document');
+            $user = $request->input('user');
+            $pass = $request->input('pass');
 
-            $hash = $this->encryptHash([
-                'id' => $id,
-                'document' => $document
-            ]);
+            $auth = $api->post("/auth", ['user' => $user, 'pass' => $pass], 'form');
 
-            return redirect()->route('card.show', ['hash' => $hash]);
+            if ($auth['data']['success']){ 
+                $hash = $this->encryptHash([
+                    'id' => $user,
+                ]);
+
+                return redirect()->route('card.show', ['hash' => $hash]);
+            } else {
+                return redirect()->route('form')->with('error', 'Credenciais inválidas');
+            }
+
         } 
 
         if ($hash) {
@@ -32,41 +38,18 @@ class CardController extends Controller
                 $decrypted = $this->decryptHash($hash);
 
                 $id = $decrypted['id'];
-                $document = $decrypted['document'];
 
-                if ($id == '00000' && $document == '00000000000') {
-                    $data = [
-                        'ra' => '00000',
-                        'cpf' => '00000000000',
-                        'name' => 'JIMMY MCGILL',
-                        'birth' => '1960-11-12',
-                        'last_enrollment' => [
-                            'course' => ['description' => 'DIREITO'],
-                            'class' => ['id' => 'DIR10A']
-                        ],
-                        'card' => [
-                            'expiration' => (date('Y') + 1) . '-03-31'
-                        ]
-                    ];
-                    
-                    return view('card', [
-                        'hash' => $hash,
-                        'isEasterEgg' => true
-                    ]);
-                }
 
                 $student = $api->get("/students/{$id}");
 
-                if (!isset($student['data'])) return redirect()->route('form')->with('error', 'Estudante não encontrado (RA ou CPF inválidos).');
+                if (!isset($student['data'])) return redirect()->route('form')->with('error', 'Credenciais inválidas');
 
                 $data = $student['data'];
 
                 if (empty($data['card'])) {
-                    return redirect()->route('form')->with('error', 'Estudante não encontrado (RA ou CPF inválidos).');
+                    return redirect()->route('form')->with('error', 'Credenciais inválidas');
                 }
                 
-                if ($data['ra'] != $id || $data['cpf'] != preg_replace('/\D/', '', $document)) return redirect()->route('form')->with('error', 'Dados não conferem. Verifique o RA e o CPF digitados.');
-
                 return view('card', [
                     'hash' => $hash
                 ]);
@@ -82,37 +65,17 @@ class CardController extends Controller
     public function generateImage(Request $request, ApiService $api, $hash)
     {
 
-
         try {
             $decrypted = $this->decryptHash($hash);
 
             $id = $decrypted['id'];
-            $document = $decrypted['document'];
 
-            if ($id == '00000' && $document == '00000000000') {
-                 $data = [
-                    'ra' => '00000',
-                    'cpf' => '00000000000',
-                    'name' => 'JIMMY MCGILL',
-                    'birth' => '1960-11-12',
-                    'last_enrollment' => [
-                        'course' => ['description' => 'DIREITO'],
-                        'class' => ['id' => 'DIR10A']
-                    ],
-                    'card' => [
-                        'expiration' => (date('Y') + 1) . '-03-31'
-                    ]
-                ];
-            } else {
-                $student = $api->get("/students/{$id}");
+            $student = $api->get("/students/{$id}");
 
-                if (!isset($student['data'])) abort(404);
+            if (!isset($student['data'])) abort(404);
 
-                $data = $student['data'];
-                
-                if ($data['ra'] != $id || $data['cpf'] != preg_replace('/\D/', '', $document)) abort(404);
-            }
-
+            $data = $student['data'];
+            
             $scale = 3; 
             $width = 500 * $scale;
             $height = 315 * $scale;
@@ -325,7 +288,6 @@ class CardController extends Controller
         try {
             $decrypted = $this->decryptHash($hash);
             $id = $decrypted['id'];
-            $document = $decrypted['document'];
             $isOldHash = true;
         } catch (\Exception $e) {
             $decoded = base64_decode($hash);
@@ -339,27 +301,6 @@ class CardController extends Controller
 
         try {
 
-            if (isset($id) && $id == '00000') {
-                    $data = [
-                        'ra' => '00000',
-                        'cpf' => '00000000000',
-                        'name' => 'JIMMY MCGILL',
-                        'birth' => '1960-11-12',
-                        'last_enrollment' => [
-                            'course' => ['description' => 'DIREITO'],
-                            'class' => ['id' => 'DIR10A']
-                        ],
-                        'card' => [
-                            'expiration' => (date('Y') + 1) . '-03-31'
-                        ]
-                    ];
-                    
-                    return view('validate', [
-                        'valid' => true,
-                        'data' => $data,
-                        'id' => $id
-                    ]);
-            }
 
             $student = $api->get("/students/{$id}");
 
@@ -373,16 +314,10 @@ class CardController extends Controller
                 return view('validate', ['valid' => false]);
             }
             
-            if ($isOldHash) {
-               if ($data['ra'] != $id || $data['cpf'] != preg_replace('/\D/', '', $document)) {
-                   return view('validate', ['valid' => false]);
-               }
-            } else {
-               if ($data['ra'] != $id) {
-                   return view('validate', ['valid' => false]);
-               }
+            if ($data['ra'] != $id) {
+                return view('validate', ['valid' => false]);
             }
-
+            
             return view('validate', [
                 'valid' => true,
                 'data' => $data,
@@ -395,52 +330,35 @@ class CardController extends Controller
     }
     private function encryptHash($data)
     {
-        // Compact Payload: ID|CPF (Only numbers for CPF to save space)
-        $payload = $data['id'] . '|' . preg_replace('/\D/', '', $data['document']);
-
-        // AES-256-GCM (Authenticated Encryption) for minimal size
-        // Requires 12 bytes IV, 16 bytes Tag
+        $payload = $data['id'];
         $iv = openssl_random_pseudo_bytes(12);
-        $key = app('encrypter')->getKey(); // Uses Laravel's APP_KEY
-        
+        $key = app('encrypter')->getKey(); 
         $tag = '';
         $ciphertext = openssl_encrypt($payload, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag);
-        
-        // Structure: IV (12) . Tag (16) . Ciphertext (Variable)
         $blob = $iv . $tag . $ciphertext;
-        
         return str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($blob));
     }
 
     private function decryptHash($hash)
     {
-        // 1. Decodifica Base64 URL Safe
         $decoded = base64_decode(str_replace(['-', '_'], ['+', '/'], $hash));
-
-        // 2. Tenta decodificar formato compact (AES-256-GCM)
-        // Min size: 12 (IV) + 16 (Tag) + 1 (Payload) = 29 bytes
         if (strlen($decoded) >= 29) {
             $iv = substr($decoded, 0, 12);
             $tag = substr($decoded, 12, 16);
             $ciphertext = substr($decoded, 28);
-            
             try {
                 $key = app('encrypter')->getKey();
                 $plaintext = openssl_decrypt($ciphertext, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag);
                 
-                if ($plaintext !== false && strpos($plaintext, '|') !== false) {
-                    list($id, $document) = explode('|', $plaintext, 2);
-                    return ['id' => $id, 'document' => $document];
+                if ($plaintext !== false) {
+                    return ['id' => $plaintext]; 
                 }
             } catch (\Exception $e) {
                 // Falha silenciosa para tentar outros métodos
             }
         }
 
-        // 3. Fallback: Formato Laravel Padrão (URL Safe ou Base64 normal)
-        // Tenta adicionar padding se necessário para o formato base64 original
         try {
-             // Re-pad para Crypt::decryptString que exige base64 válido
              $b64 = str_replace(['-', '_'], ['+', '/'], $hash);
              $len = strlen($b64);
              if ($len % 4) {
@@ -449,7 +367,6 @@ class CardController extends Controller
              return json_decode(Crypt::decryptString($b64), true);
         } catch (\Exception $e) {}
 
-        // 4. Fallback: Legado "NICETRYBRO"
         try {
             $decodedLegacy = base64_decode($hash);
             if ($decodedLegacy && strpos($decodedLegacy, 'NICETRYBRO') === 0) {
