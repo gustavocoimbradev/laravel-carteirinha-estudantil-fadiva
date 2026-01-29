@@ -2,15 +2,12 @@
     <x-slot:title>FADIVA - Carteirinha de Identificação Estudantil Digital</x-slot:title>
 
     <div class="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 flex flex-col lg:flex-row overflow-x-hidden">
-        <!-- Left Column - Form -->
         <div
             class="w-full lg:w-1/2 min-h-screen lg:h-screen bg-gradient-fadiva flex items-center justify-center p-4 lg:p-6 relative overflow-hidden">
-            <!-- Animated Background Gradient -->
             <div class="absolute inset-0 opacity-30">
                 <div class="absolute inset-0 bg-gradient-fadiva-animated animate-gradient-shift"></div>
             </div>
 
-            <!-- Background Pattern -->
             <div class="absolute inset-0 opacity-10">
                 <div class="absolute inset-0"
                     style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 40px 40px;">
@@ -18,10 +15,8 @@
             </div>
 
             <div class="w-full max-w-lg relative z-10">
-                <!-- Header with Logo -->
                 <x-header-logo />
 
-                <!-- Form Card -->
                 <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-6 lg:p-7 border border-white/20">
                     <h2 class="text-lg lg:text-xl font-semibold text-gray-800 mb-5 text-center">Acesse sua Carteirinha
                     </h2>
@@ -29,7 +24,6 @@
                     <form action="{{ route('card.proccess') }}" method="POST" class="space-y-4">
                         @csrf
 
-                        <!-- RA Field -->
                         <div>
                             <label for="user"
                                 class="block text-sm font-medium text-gray-700 mb-1.5 flex items-center gap-2">
@@ -45,7 +39,6 @@
                                         class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-gray-900/95 text-white text-xs rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 text-center backdrop-blur-sm pointer-events-none">
                                         O usuário e a senha são os mesmos do <span
                                             class="font-bold text-blue-300">Portal do Aluno</span>.
-                                        <!-- Arrow -->
                                         <div
                                             class="absolute top-full left-1/2 transform -translate-x-1/2 border-8 border-transparent border-t-gray-900/95">
                                         </div>
@@ -58,7 +51,6 @@
                                 placeholder="Digite seu usuário">
                         </div>
 
-                        <!-- CPF Field -->
                         <div>
                             <label for="pass" class="block text-sm font-medium text-gray-700 mb-1.5">
                                 Senha
@@ -68,7 +60,6 @@
                                 placeholder="Digite sua senha">
                         </div>
 
-                        <!-- Submit Button -->
                         <button type="submit"
                             class="cursor-pointer w-full bg-gradient-fadiva hover:opacity-90 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-fadiva-rose focus:ring-offset-2">
                             Acessar Carteirinha
@@ -76,14 +67,10 @@
 
 
 
-                        {{-- Orientacoes, informe que o usuario e a senha é o mesmo do Portal do Aluno, deixe linkado => https://portal.fadiva.edu.br/FrameHTML/web/app/edu/PortalEducacional/login/ --}}
 
                     </form>
 
-                    <!-- Guidelines -->
 
-
-                    <!-- Alerts -->
                     @if (session('error'))
                         <div class="mt-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg flex items-start shadow-sm transition-all duration-300 animate-fade-in-up"
                             role="alert">
@@ -112,28 +99,8 @@
             </div>
         </div>
 
-        <!-- Right Column - Information (Desktop) / Bottom Section (Mobile) -->
         <x-info-column />
     </div>
 
-    <!-- CPF Mask Script -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const cpfInput = document.getElementById('pass');
 
-            if (cpfInput) {
-                cpfInput.addEventListener('input', function(e) {
-                    let value = e.target.value.replace(/\D/g, '');
-
-                    if (value.length <= 11) {
-                        value = value.replace(/(\d{3})(\d)/, '$1.$2');
-                        value = value.replace(/(\d{3})(\d)/, '$1.$2');
-                        value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-                    }
-
-                    e.target.value = value;
-                });
-            }
-        });
-    </script>
 </x-layout>
