@@ -40,7 +40,7 @@ class CardController extends Controller
                         'cpf' => '00000000000',
                         'name' => 'JIMMY MCGILL',
                         'birth' => '1960-11-12',
-                        'enroll' => [
+                        'last_enrollment' => [
                             'course' => ['description' => 'DIREITO'],
                             'class' => ['description' => 'DIR10A']
                         ],
@@ -95,7 +95,7 @@ class CardController extends Controller
                     'cpf' => '00000000000',
                     'name' => 'JIMMY MCGILL',
                     'birth' => '1960-11-12',
-                    'enroll' => [
+                    'last_enrollment' => [
                         'course' => ['description' => 'DIREITO'],
                         'class' => ['description' => 'DIR10A']
                     ],
@@ -151,12 +151,12 @@ class CardController extends Controller
 
             // Curso
             imagettftext($image, 8 * $scale, 0, 20 * $scale, 230 * $scale, $black, $fontBold, 'CURSO');
-            imagettftext($image, 8 * $scale, 0, 20 * $scale, 250 * $scale, $black, $fontRegular, strtoupper($data['enroll']['course']['description']));
+            imagettftext($image, 8 * $scale, 0, 20 * $scale, 250 * $scale, $black, $fontRegular, strtoupper($data['last_enrollment']['course']['description']));
 
 
             // Turma
             imagettftext($image, 8 * $scale, 0, 170 * $scale, 230 * $scale, $black, $fontBold, 'TURMA');
-            imagettftext($image, 8 * $scale, 0, 170 * $scale, 250 * $scale, $black, $fontRegular, $data['enroll']['class']['description']);
+            imagettftext($image, 8 * $scale, 0, 170 * $scale, 250 * $scale, $black, $fontRegular, $data['last_enrollment']['class']['description']);
          
             // Validade
             $validityText = 'Válido até ' . (new DateTime((string) ($data['card']['expiration'])))->format('d/m/Y');
@@ -349,7 +349,7 @@ class CardController extends Controller
                         'cpf' => '00000000000',
                         'name' => 'JIMMY MCGILL',
                         'birth' => '1960-11-12',
-                        'enroll' => [
+                        'last_enrollment' => [
                             'course' => ['description' => 'DIREITO'],
                             'class' => ['description' => 'DIR10A']
                         ],
