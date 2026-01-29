@@ -34,12 +34,14 @@ class CardController extends Controller
 
         if ($hash) {
 
-            try {
-
+            
                 dd([
                     'hash esperada' => $request->session()->get('hash'),
                     'hash real' => $hash
                 ]);
+
+            try {
+
 
                 if ($request->session()->get('hash') !== $hash) return redirect()->route('form')->with('error', 'Sessão expirada');
                 
