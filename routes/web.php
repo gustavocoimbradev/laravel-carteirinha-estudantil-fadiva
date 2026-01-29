@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\CardController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
-Route::get('/', function () {
+Route::get('/', function (Request $request) {
+    $request->session()->forget('hash');
     return view('form');
 })->name('form');
 
