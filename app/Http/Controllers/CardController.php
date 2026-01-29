@@ -34,17 +34,11 @@ class CardController extends Controller
 
         if ($hash) {
 
+            if ($request->session()->get('hash') == $hash) {
             
-                dd([
-                    'hash esperada' => $request->session()->get('hash'),
-                    'hash real' => $hash
-                ]);
-
             try {
 
-
-                if ($request->session()->get('hash') !== $hash) return redirect()->route('form')->with('error', 'Sessão expirada');
-                
+  
                 $decrypted = $this->decryptHash($hash);
 
                 $id = $decrypted['id'];
@@ -65,6 +59,10 @@ class CardController extends Controller
                 
             } catch (\Exception $e) {
                 return redirect()->route('form')->with('error', 'Ocorreu um erro ao processar sua solicitação. Tente novamente.');
+            }
+
+            } else {
+                return redirect()->route('form')->with('error', 'Sessão expirada')
             }
         }
 
