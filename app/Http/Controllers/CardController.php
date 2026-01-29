@@ -36,6 +36,11 @@ class CardController extends Controller
 
             try {
 
+                dd([
+                    'hash esperada' => $request->session()->get('hash'),
+                    'hash real' => $hash
+                ]);
+
                 if ($request->session()->get('hash') !== $hash) return redirect()->route('form')->with('error', 'Sessão expirada');
                 
                 $decrypted = $this->decryptHash($hash);
