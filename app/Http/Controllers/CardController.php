@@ -156,7 +156,7 @@ class CardController extends Controller
 
             // Turma
             imagettftext($image, 8 * $scale, 0, 170 * $scale, 230 * $scale, $black, $fontBold, 'TURMA');
-            imagettftext($image, 8 * $scale, 0, 170 * $scale, 250 * $scale, $black, $fontRegular, $data['last_enrollment']['class']['description']);
+            imagettftext($image, 8 * $scale, 0, 170 * $scale, 250 * $scale, $black, $fontRegular, $data['last_enrollment']['class']['id']);
          
             // Validade
             $validityText = 'Válido até ' . (new DateTime((string) ($data['card']['expiration'])))->format('d/m/Y');
