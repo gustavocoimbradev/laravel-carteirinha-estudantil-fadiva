@@ -36,7 +36,7 @@ class CardController extends Controller
 
             try {
 
-                if ($request->session()->get('hash') !== $this->decryptHash($hash)) return redirect()->route('form')->with('error', 'Sessão expirada');
+                if ($request->session()->get('hash') !== $hash) return redirect()->route('form')->with('error', 'Sessão expirada');
                 
                 $decrypted = $this->decryptHash($hash);
 
