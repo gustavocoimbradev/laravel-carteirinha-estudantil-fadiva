@@ -42,7 +42,7 @@ class CardController extends Controller
                         'birth' => '1960-11-12',
                         'last_enrollment' => [
                             'course' => ['description' => 'DIREITO'],
-                            'class' => ['description' => 'DIR10A']
+                            'class' => ['id' => 'DIR10A']
                         ],
                         'card' => [
                             'expiration' => (date('Y') + 1) . '-03-31'
@@ -97,7 +97,7 @@ class CardController extends Controller
                     'birth' => '1960-11-12',
                     'last_enrollment' => [
                         'course' => ['description' => 'DIREITO'],
-                        'class' => ['description' => 'DIR10A']
+                        'class' => ['id' => 'DIR10A']
                     ],
                     'card' => [
                         'expiration' => (date('Y') + 1) . '-03-31'
@@ -129,11 +129,7 @@ class CardController extends Controller
             imagecopyresampled($image, $background, 0, 0, 0, 0, $width, $height, $bgWidth, $bgHeight);
 
             $black = imagecolorallocate($image, 0, 0, 0);
-            $darkGray = imagecolorallocate($image, 51, 51, 51);
-            $gray = imagecolorallocate($image, 102, 102, 102);
             $white = imagecolorallocate($image, 255, 255, 255);
-            $lightGray = imagecolorallocate($image, 229, 229, 229);
-            $borderWhite = imagecolorallocate($image, 255, 255, 255);
 
             $fontRegular = public_path('fonts/arial-regular.ttf');
             $fontBold = public_path('fonts/arial-bold.ttf');
@@ -351,7 +347,7 @@ class CardController extends Controller
                         'birth' => '1960-11-12',
                         'last_enrollment' => [
                             'course' => ['description' => 'DIREITO'],
-                            'class' => ['description' => 'DIR10A']
+                            'class' => ['id' => 'DIR10A']
                         ],
                         'card' => [
                             'expiration' => (date('Y') + 1) . '-03-31'

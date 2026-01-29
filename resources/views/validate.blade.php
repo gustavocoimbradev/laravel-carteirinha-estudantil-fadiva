@@ -72,11 +72,11 @@
                                 <div>
                                     <p class="text-xs text-gray-500 uppercase tracking-wide">Curso</p>
                                     <p class="font-medium text-gray-800 leading-tight">
-                                        {{ $data['enroll']['course']['description'] }}</p>
+                                        {{ $data['last_enrollment']['course']['description'] }}</p>
                                 </div>
                                 <div>
                                     <p class="text-xs text-gray-500 uppercase tracking-wide">Turma</p>
-                                    <p class="font-medium text-gray-800">{{ $data['enroll']['class']['description'] }}
+                                    <p class="font-medium text-gray-800">{{ $data['last_enrollment']['class']['id'] }}
                                     </p>
                                 </div>
                             </div>
