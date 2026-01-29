@@ -62,7 +62,7 @@ class CardController extends Controller
             }
 
             } else {
-                return redirect()->route('form')->with('error', 'Sessão expirada')
+                return redirect()->route('form')->with('error', 'Sessão expirada');
             }
         }
 
