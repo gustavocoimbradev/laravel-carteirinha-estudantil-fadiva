@@ -24,7 +24,7 @@ class CardController extends Controller
                 $hash = $this->encryptHash([
                     'id' => $user,
                 ]);
-
+                $request->session()->put('hash', $hash);
                 return redirect()->route('card.show', ['hash' => $hash]);
             } else {
                 return redirect()->route('form')->with('error', 'Credenciais inválidas');
@@ -35,10 +35,12 @@ class CardController extends Controller
         if ($hash) {
 
             try {
+
+                if (!$request->session()->get('hash') == $this->decryptHash($hash)) return redirect()->route('form')->with('error', 'Sessão expirada');
+                
                 $decrypted = $this->decryptHash($hash);
 
                 $id = $decrypted['id'];
-
 
                 $student = $api->get("/students/{$id}");
 
